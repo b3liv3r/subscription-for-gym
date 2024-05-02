@@ -1,0 +1,30 @@
+services:
+  db_subscriptions:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./modules/db/migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: postgres
+    networks:
+      - default
+
+  subscriptions:
+    build: ./
+    ports:
+      - 30002:30002
+    depends_on:
+      - db_subscriptions
+    networks:
+      - skynet
+      - default
+
+networks:
+  skynet:
+    external: true
+  default:
+    external: false
